@@ -1,6 +1,6 @@
 package com.tilmeez.dao;
 
-import com.tilmeez.springdemo.entity.Customer;
+import com.tilmeez.entity.Customer;
 
 import java.util.List;
 

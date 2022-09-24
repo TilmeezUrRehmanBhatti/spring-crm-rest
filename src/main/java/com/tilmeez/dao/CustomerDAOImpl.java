@@ -1,7 +1,7 @@
 package com.tilmeez.dao;
 
-import com.tilmeez.springdemo.entity.Customer;
-import com.tilmeez.springdemo.util.SortUtils;
+import com.tilmeez.entity.Customer;
+import com.tilmeez.util.SortUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;

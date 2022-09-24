@@ -1,7 +1,7 @@
 package com.tilmeez.service;
 
-import com.tilmeez.springdemo.dao.CustomerDAO;
-import com.tilmeez.springdemo.entity.Customer;
+import com.tilmeez.dao.CustomerDAO;
+import com.tilmeez.entity.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

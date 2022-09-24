@@ -10,6 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -21,6 +22,7 @@ import java.util.logging.Logger;
 
 @Configuration
 @EnableWebMvc
+@EnableTransactionManagement
 @ComponentScan(basePackages = "com.tilmeez")
 @PropertySource("classpath:persistence-postgresql.properties")
 public class AppConfig {
@@ -39,12 +41,12 @@ public class AppConfig {
     public DataSource myDataSource() {
 
         // create a connection pool
-        ComboPooledDataSource securityDataSource
+        ComboPooledDataSource myDataSource
                 = new ComboPooledDataSource();
 
         // get the jdbc driver class
         try {
-            securityDataSource.setDriverClass(env.getProperty("jdbc.driver"));
+            myDataSource.setDriverClass(env.getProperty("jdbc.driver"));
         } catch (PropertyVetoException e) {
             throw new RuntimeException(e);
         }
@@ -56,24 +58,35 @@ public class AppConfig {
 
         // set connection props
 
-        securityDataSource.setJdbcUrl(env.getProperty("jdbc.url"));
-        securityDataSource.setUser(env.getProperty("jdbc.user"));
-        securityDataSource.setPassword(env.getProperty("jdbc.password"));
+        myDataSource.setJdbcUrl(env.getProperty("jdbc.url"));
+        myDataSource.setUser(env.getProperty("jdbc.user"));
+        myDataSource.setPassword(env.getProperty("jdbc.password"));
 
         // set connection pool props
-        securityDataSource.setInitialPoolSize(
+        myDataSource.setInitialPoolSize(
                 getInProperty("connection.pool.initialPoolSize"));
-        securityDataSource.setMinPoolSize(
+        myDataSource.setMinPoolSize(
                 getInProperty("connection.pool.minPoolSize"));
-        securityDataSource.setMaxPoolSize(
+        myDataSource.setMaxPoolSize(
                 getInProperty("connection.pool.maxPoolSize"));
-        securityDataSource.setMaxIdleTime(
+        myDataSource.setMaxIdleTime(
                 getInProperty("connection.pool.maxIdleTime"));
 
-        return securityDataSource;
+        return myDataSource;
     }
 
+    private Properties getHibernateProperties() {
+
+        // set hibernate properties
+        Properties props = new Properties();
+
+        props.setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
+        props.setProperty("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+
+        return props;
+    }
     // need a helper method
+
     // read environment property and convert to int
 
     private int getInProperty(String propName) {
@@ -87,16 +100,6 @@ public class AppConfig {
 
     }
 
-    private Properties getHibernateProperties() {
-
-        // set hibernate properties
-        Properties props = new Properties();
-
-        props.setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
-        props.setProperty("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-
-        return props;
-    }
 
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
@@ -106,7 +109,7 @@ public class AppConfig {
 
         // set the properties
         sessionFactory.setDataSource(myDataSource());
-        sessionFactory.setPackagesToScan(env.getProperty("hibernate.packagesTo"));
+        sessionFactory.setPackagesToScan(env.getProperty("hibernate.packagesToScan"));
         sessionFactory.setHibernateProperties(getHibernateProperties());
 
         return sessionFactory;
