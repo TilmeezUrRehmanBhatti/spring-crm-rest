@@ -19,8 +19,8 @@ public class CustomerRestController {
 
     // add mapping for GET / customer
     @GetMapping("/customers")
-    public List<Customer> getCustomers(int theSortField) {
+    public List<Customer> getCustomers() {
 
-        return customerService.getCustomers(theSortField);
+        return customerService.getCustomers();
     }
 }
